@@ -13,6 +13,7 @@
   "license": "MIT",
   "devDependencies": {
     "joi": "^6.4.3",
+    "later": "^1.2.0",
     "lodash": "^3.9.3"
   }
 }
