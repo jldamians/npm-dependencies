@@ -19,11 +19,21 @@ db.Marca.findAll({
 
 	return Promises.props(procesos)
 }).then(function(infoMarca){
-	var info = [] ;
+	var info = [] 
 
 	for (var marca in infoMarca) {
 		info.push(infoMarca[marca]['dataValues'])	
 	}
 
-	console.log(info)
+	console.log('info => ', info)
+
+	return infoMarca
+}).then(function(dataMarca){
+	var data = [] 
+
+	for (var marca in dataMarca) {
+		data.push(dataMarca[marca]['dataValues'])	
+	}
+
+	console.log('data => ', data)	
 })
