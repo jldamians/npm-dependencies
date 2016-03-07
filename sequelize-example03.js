@@ -16,11 +16,21 @@ Marca.hasMany(
 Marca.hasMany(Modelo, { foreignKey: 'idmarca' })
 Modelo.belongsTo(Marca, { foreignKey: 'idmarca' })
 
+Modelo.hasMany(Modem, {foreignKey: 'idmodelo'})
+Modem.belongsTo(Modelo, {foreignKey: 'idmodelo'})
+
+
 var data = []
 
-Marca.findAll({include : [Modelo]}).then(function(result) {
-	//console.dir(JSON.stringify(result))
-    result.forEach(function(elem){
+Marca.findAll({
+    include : [{
+        model: Modelo, 
+        required: true,
+        include: [Modem]
+    }]
+}).then(function(result) {
+	console.dir(JSON.stringify(result))
+    /*result.forEach(function(elem){
     	data.push({
     		idmarca: elem['dataValues']['idmarca'],
     		nombre: elem['dataValues']['nombre'],
@@ -40,5 +50,5 @@ Marca.findAll({include : [Modelo]}).then(function(result) {
     	})
     })
 
-    console.log('Marca => ', JSON.stringify(data))
+    console.log('Marca => ', JSON.stringify(data))*/
 })
