@@ -8,7 +8,7 @@ var sequelize = new Sequelize(
     'app+-*tiger',
     {
         dialect: 'mysql',
-        logging: false,
+        logging: console.log,
         host: '45.55.199.53',
         port: 3306,
         timezone: '-05:00',
@@ -17,7 +17,6 @@ var sequelize = new Sequelize(
         }
     }
 )
-
 
 var Marca = sequelize.define(
     'Marca', 
