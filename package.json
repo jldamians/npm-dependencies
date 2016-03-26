@@ -19,5 +19,8 @@
     "bluebird": "~3.3.3",
     "sequelize": "~3.19.3",
     "mysql": "~2.10.2"
+  },
+  "dependencies": {
+    "excel-export": "^0.5.1"
   }
 }

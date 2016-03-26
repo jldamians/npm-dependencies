@@ -2,6 +2,8 @@
 
 var Sequelize = require('sequelize');
 var Promises = require('bluebird');
+//var Joi = require('joi');
+var nodeExcel = require('excel-export');
 
 var sequelize = new Sequelize(
     'facturactiva-ultimo',
@@ -93,11 +95,27 @@ var ListClient = [
     ['Jose Luis Damian', 'AA.HH. S. Unidos - Pucallpa', '961952104', 6, '10335952141', 'jads17@gmail.com', 1, 'A', 1],
     ['Carlos E. Damian', 'AA.HH. S. Unidos - Pucallpa', '961088008', 6, '12343323890', 'taduda@gmail.com', 1, 'A', 1],
     ['Anani Ayala Paz', 'AA.HH. S#3 Bocanegra - Lima', '992703459', 6, '53735326892', 'any_15@gmail.com', 1, 'A', 1],
-]
+];
 
 // variable de control, para el recorrido del origen de datos
 var CURRENT_INDEX_PROCESSING = 0;
 
+// variable de configuracion para el archivo excel
+var config = {};
+
+config.name = "error";
+
+config.cols = [
+  { caption: 'Nombres', type: 'string' },
+  { caption: 'Direccion', type: 'string' },
+  { caption: 'Movil', type: 'string' },
+  { caption: 'Tipo Documento Identidad', type: 'number' },
+  { caption: 'Documento Identidad', type: 'string' },
+  { caption: 'Correo Electronico', type: 'string' },
+  { caption: 'Observacion', type: 'string' }
+];
+
+// funcion que realiza las insercion
 function insertPersona(dataPersona) {
     return sequelize.transaction(function(transaction){
         var dataSend = {
@@ -112,12 +130,25 @@ function insertPersona(dataPersona) {
             empresaCreacion: dataPersona[8]
         };
 
+        config.rows.push(
+          [
+            dataPersona[0],
+            dataPersona[1],
+            dataPersona[2],
+            dataPersona[3],
+            dataPersona[4],
+            dataPersona[5],
+            'Prueba Excel'
+          ]
+        );
+
         return new Promises(function(resolve) {
             return resolve(Cliente.generate(transaction, dataSend));
         });
     });
 }
 
+// funcion recursiva que recorre los datos
 function getNextDataToInsert() {
   var currentDataProcessing;
 
@@ -142,8 +173,11 @@ function getNextDataToInsert() {
   });
 }
 
+// ejecucion y control del resultado
 getNextDataToInsert().then(function() {
     console.log('INSERTADO.');
+
+    fileExcel = nodeExcel.execute(conf);
 }).catch(function(err){
     console.log('ERROR => ', err);
 });
