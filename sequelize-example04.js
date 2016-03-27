@@ -2,8 +2,6 @@
 
 var Sequelize = require('sequelize');
 var Promises = require('bluebird');
-//var Joi = require('joi');
-var nodeExcel = require('excel-export');
 
 var sequelize = new Sequelize(
     'facturactiva-ultimo',
@@ -100,21 +98,6 @@ var ListClient = [
 // variable de control, para el recorrido del origen de datos
 var CURRENT_INDEX_PROCESSING = 0;
 
-// variable de configuracion para el archivo excel
-var config = {};
-
-config.name = "error";
-
-config.cols = [
-  { caption: 'Nombres', type: 'string' },
-  { caption: 'Direccion', type: 'string' },
-  { caption: 'Movil', type: 'string' },
-  { caption: 'Tipo Documento Identidad', type: 'number' },
-  { caption: 'Documento Identidad', type: 'string' },
-  { caption: 'Correo Electronico', type: 'string' },
-  { caption: 'Observacion', type: 'string' }
-];
-
 // funcion que realiza las insercion
 function insertPersona(dataPersona) {
     return sequelize.transaction(function(transaction){
@@ -129,18 +112,6 @@ function insertPersona(dataPersona) {
             estado: dataPersona[7], 
             empresaCreacion: dataPersona[8]
         };
-
-        config.rows.push(
-          [
-            dataPersona[0],
-            dataPersona[1],
-            dataPersona[2],
-            dataPersona[3],
-            dataPersona[4],
-            dataPersona[5],
-            'Prueba Excel'
-          ]
-        );
 
         return new Promises(function(resolve) {
             return resolve(Cliente.generate(transaction, dataSend));
@@ -176,8 +147,6 @@ function getNextDataToInsert() {
 // ejecucion y control del resultado
 getNextDataToInsert().then(function() {
     console.log('INSERTADO.');
-
-    fileExcel = nodeExcel.execute(conf);
 }).catch(function(err){
     console.log('ERROR => ', err);
 });
