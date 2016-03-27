@@ -21,6 +21,6 @@
     "mysql": "~2.10.2"
   },
   "dependencies": {
-    "excel-export": "^0.5.1"
+    "xlsx-writestream": "^0.4.0"
   }
 }

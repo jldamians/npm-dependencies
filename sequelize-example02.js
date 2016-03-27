@@ -33,6 +33,6 @@ Marca.findAll({
     		}
     	}]
     }],
-})/*.then(function(result) {
+}).then(function(result) {
 	console.log(JSON.stringify(result))
-})*/
+})
