@@ -1,7 +1,7 @@
 'use strict';
 
 var Sequelize = require('sequelize');
-var Promises = require('bluebird');
+var Promise = require('bluebird');
 var Joi = require('joi');
 var fs = require('fs');
 var XLSXWriter = require('xlsx-writestream');
@@ -123,27 +123,33 @@ var configExcel = {
 // variable de control, para el recorrido del origen de datos
 var CURRENT_INDEX_PROCESSING = 0;
 
+debugger;
+
 // funcion que realiza las insercion
 function insertPersona(dataPersona) {
-  return Joi.validate({email: dataPersona[5], mobile: dataPersona[2], ruc: dataPersona[4]}, schema).the(function(){
-      return sequelize.transaction(function(transaction){
-          var dataSend = {
-              nombre: dataPersona[0], 
-              direccion: dataPersona[1], 
-              telefono: dataPersona[2], 
-              tipoDocumentoIdentidad: dataPersona[3], 
-              numeroDocumentoIdentidad: dataPersona[4], 
-              emailContacto: dataPersona[5], 
-              emailConfirmado: dataPersona[6], 
-              estado: dataPersona[7], 
-              empresaCreacion: dataPersona[8]
-          };
+  return Joi.validate({email: dataPersona[5], mobile: dataPersona[2], ruc: dataPersona[4]}, schema).then(function() {
+    return sequelize.transaction(function(transaction){
+      console.log('datos correctos...');
 
-          return new Promises(function(resolve) {
-              return resolve(Cliente.generate(transaction, dataSend));
-          });
+      var dataSend = {
+        nombre: dataPersona[0], 
+        direccion: dataPersona[1], 
+        telefono: dataPersona[2], 
+        tipoDocumentoIdentidad: dataPersona[3], 
+        numeroDocumentoIdentidad: dataPersona[4], 
+        emailContacto: dataPersona[5], 
+        emailConfirmado: dataPersona[6], 
+        estado: dataPersona[7], 
+        empresaCreacion: dataPersona[8]
+      };
+
+      return new Promise(function(resolve) {
+        return resolve(Cliente.generate(transaction, dataSend));
       });
-  }).catch(function(){
+    });
+  }).catch(function(err){
+    console.log('datos incorrectos...');
+
     configExcel.ROWS.push({
       'Nombre': dataPersona[0],
       'Dirección': dataPersona[1],
@@ -151,15 +157,18 @@ function insertPersona(dataPersona) {
       'Tipo Documento Identidad': dataPersona[3],
       'Número Documento Identidad': dataPersona[4],
       'Correo Electrónico': dataPersona[5],
-      'Observación': observacion
+      'Observación': 'Validación...'
     });
 
-    return Promises.resolve();
+    return Promise.resolve();
   });
 }
 
 function generateExcelError(conf){
+  console.log('validando excel ...');
   if ( conf.ROWS.length === 0 ) {
+    console.log('sin registros ...');
+
     return;
   }
 
@@ -185,7 +194,7 @@ function getNextDataToInsert() {
   var currentDataProcessing;
 
   if (CURRENT_INDEX_PROCESSING === ListClient.length) {
-    return Promises.resolve();
+    return Promise.resolve();
   }
 
   currentDataProcessing = ListClient[CURRENT_INDEX_PROCESSING];
@@ -196,7 +205,7 @@ function getNextDataToInsert() {
     CURRENT_INDEX_PROCESSING++;
 
     return getNextDataToInsert();
-  }).catch(function() {
+  }).catch(function(err) {
     console.log('No Insertado...');
 
     CURRENT_INDEX_PROCESSING++;
@@ -207,7 +216,7 @@ function getNextDataToInsert() {
 
 // ejecucion y control del resultado
 getNextDataToInsert().then(function() {
-    console.log('INSERTADO.');
+    console.log('INSERT ALL');
 
     generateExcelError(configExcel);
 }).catch(function(err){

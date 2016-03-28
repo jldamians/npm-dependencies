@@ -21,6 +21,7 @@
     "mysql": "~2.10.2"
   },
   "dependencies": {
+    "nodemon": "^1.9.1",
     "xlsx-writestream": "^0.4.0"
   }
 }
