@@ -5,7 +5,10 @@ var Excel = require('exceljs');
 var fs = require('fs');
 
 var style = {
-	ROW_HEADER: { font: { name: 'Times New Roman', size: 12, bold: true, color: { argb: 'DD254E'} } },
+	ROW_HEADER: { 
+		font: { name: 'Times New Roman', size: 12, bold: true, color: { argb: 'DD254E'} },
+		fill: { type: 'pattern', pattern:'solid', fgColor:{argb:'FFFFFF00'}, bgColor:{argb:'FF0000FF'} }
+	},
 	ROW_BODY: { font: { name: 'Arial', size: 11, italic: true, color: { argb: '4455A2'} } }
 }
 
@@ -46,7 +49,8 @@ worksheet.addRows(conf.ROWS);
 // seteando estilos a las cabeceras y registros
 worksheet.eachRow(function(row, rowNumber) {
 	if ( rowNumber === 1 ) {
-    	row.font = style.ROW_HEADER.font
+		row.font = style.ROW_HEADER.font;
+		row.fill = style.ROW_HEADER.fill;
 	} else {
 		row.font = style.ROW_BODY.font
 	}
